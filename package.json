@@ -1,0 +1,32 @@
+{
+  "name": "wonderful-interview",
+  "version": "1.0.0",
+  "description": "files for code challenge",
+  "main": "index.js",
+  "scripts": {
+    "start": "sass -s compressed assets/scss/main.scss assets/css/main.css; tsc",
+    "develop": "webpack-dev-server --mode development",
+    "build" : "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canderson9625/wonderful-interview.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/canderson9625/wonderful-interview/issues"
+  },
+  "homepage": "https://github.com/canderson9625/wonderful-interview#readme",
+  "dependencies": {
+    "sass": "^1.58.3",
+    "typescript": "^4.9.5"
+  },
+  "devDependencies": {
+    "@types/google.maps": "^3.52.0",
+    "ts-loader": "^9.4.2",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1"
+  }
+}
