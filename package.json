@@ -4,7 +4,7 @@
   "description": "files for code challenge",
   "main": "index.js",
   "scripts": {
-    "start": "sass -s compressed assets/scss/main.scss assets/css/main.css; tsc",
+    "start": "sass -s compressed assets/scss/main.scss assets/css/main.css; webpack",
     "develop": "webpack-dev-server --mode development",
     "build" : "webpack --mode production"
   },
