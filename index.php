@@ -5,13 +5,16 @@
         <h1>The Amazing Airport Visualizer</h1>
     </header>
 
-    <section>
-        <h2>Share your favorite airports!</h2>
-        <p>Upload a CSV document with your favorite airports. We'll put them on a map, and provide a shareable url.</p>
-
-        <div class="modal">
-            <input type="file" accept=".csv">Select File</input>
-            <p>Drag and drop a CSV file, or select one from your computer.</p>
+    <section class="modal">
+        <div class="modal-content">
+            <h2>Share your favorite airports!</h2>
+            <p>Upload a CSV document with your favorite airports. We'll put them on a map, and provide a shareable url.</p>
+    
+            <div class="input-group">
+                <input class="visually-hidden" type="file" accept=".csv"></input>
+                <button id="file-input">Select File</button>
+                <p>Drag and drop a CSV file, or select one from your computer.</p>
+            </div>
         </div>
     </section>
 </main>

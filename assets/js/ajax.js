@@ -1,4 +1,3 @@
-// Handle Google maps styles
 let mapStyles = [
     {
         "featureType": "all",
@@ -169,81 +168,81 @@ let mapStyles = [
         ]
     }
 ]
-function initMap(): void {
-    
+
+document.querySelector('.input-group input')?.addEventListener("change", () => {
+    let csv = document.querySelector('.input-group input').files[0];
+    const ajaxData = new FormData();
+    ajaxData.append( 'action', 'submission_create');
+    ajaxData.append( 'nonce', submissionObject.nonce);
+    ajaxData.append('submission', csv, csv.name);
+    const request = new Request(submissionObject.ajaxurl, {method: 'POST', body: ajaxData});
+    // console.log(request);
+    fetch(request);
+});
+
+window.addEventListener("load", () => {
+    let csvLines = post_meta.data[0].split("\r");
+    let headers = csvLines[0].split(",");
+    let result = [];
+
+    // console.log(JSON.stringify(post_meta.data));
+
+    for ( let i = 1; i < csvLines.length; i++ ) {
+        let obj = {};
+        let currentLine=csvLines[i].split(",");
+
+        for ( let j = 0; j < headers.length; j++ ) {
+            obj[headers[j]] = currentLine[j];
+        }
+
+        result.push(obj);
+    }
+
+    let output = JSON.parse( JSON.stringify(result) );
+
+
+    // console.log(output);
+
     const center = { lat: 40, lng: -101.2996 };
-    
     const map = new google.maps.Map(
-        document.getElementById("map") as HTMLElement,
+        document.getElementById("map"),
         {
             zoom: 5,
             center: center,
             styles: mapStyles,
         }
     );
-    
-    const marker = new google.maps.Marker({
-        position: center,
-        map: map,
-    });
-}
-
-//declare our window closure
-export {};
-declare global {
-    interface Window {
-        initMap: () => void;
-    }
-}
-window.initMap = initMap;
 
 
-//use button visually and store data with input
-const button = document.getElementById("file-input");
-const input: HTMLInputElement | null = document.querySelector(".input-group input");
-const dropZone = document.querySelector('.modal');
+    // output.forEach(obj => {
+        Object.entries(output).forEach( ([key, val]) => {
+            let coords = {lat: Number(val.Latitude), lng: Number(val.Longitude)};
+            console.log(coords);
 
-document.addEventListener("dragover", function(event) {
-    event.preventDefault();
+            const contentString =
+                '<div id="content" style="color: black;">' +
+                '<p style="margin: 0; margin-bottom: 5px;"><strong>' + val["Airport Name"] + '</strong></p>' +
+                '<p style="margin: 0;">'+ val.Latitude + ', ' + val.Longitude + '</p>' +
+                "</div>";
+        
+            const infowindow = new google.maps.InfoWindow({
+                content: contentString,
+                ariaLabel: val["Airport Name"],
+            });
+            
+
+            let marker = new google.maps.Marker({
+                position: coords,
+                map,
+                title: val["Airport Name"],
+            });
+
+            marker.addListener("click", () => {
+                infowindow.open({
+                    anchor: marker,
+                    map,
+                })
+            });
+        });
+    // });
 });
-
-if (dropZone !== null) {
-    dropZone.addEventListener("drop", (e) => {dropHandler(e as DragEvent)});
-
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefaults, false)
-    });
-}
-
-function preventDefaults (e: Event) {
-    e.preventDefault()
-    e.stopPropagation()
-}
-
-button?.addEventListener("click", triggerInputClick);
-input?.addEventListener("change", updateFileUploadText);
-
-function triggerInputClick() {    
-    input?.click();
-}
-
-function updateFileUploadText() {
-    if (input !== null && input.files !== null && input?.files[0]?.name !== null && button !== null) {
-        button.innerText=input?.files[0]?.name || "Select File";
-    }
-}
-
-function dropHandler(file: DragEvent) {
-    if (input !== null && file.dataTransfer !== null && file.dataTransfer?.files[0].type === "text/csv") {
-        input.files=file.dataTransfer.files;
-    } else {
-        alert("Please upload a CSV file.");
-    }
-    updateFileUploadText();
-}
-
-//then we can have a confirm to start the ajax call to make the post
-// prompt yes -> admin ajax
-// prompt no -> clear dataTransfer and updateFileUploadText
-
-//fetch admin ajax with action

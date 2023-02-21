@@ -8,4 +8,4 @@
     <?php wp_head(); ?>
 </head>
 
-<body class="<?php get_body_class(); ?>">
+<body <?php body_class(); ?>>
