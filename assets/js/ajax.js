@@ -169,23 +169,36 @@ let mapStyles = [
     }
 ]
 
-document.querySelector('.input-group input')?.addEventListener("change", () => {
-    let csv = document.querySelector('.input-group input').files[0];
-    const ajaxData = new FormData();
-    ajaxData.append( 'action', 'submission_create');
-    ajaxData.append( 'nonce', submissionObject.nonce);
-    ajaxData.append('submission', csv, csv.name);
-    const request = new Request(submissionObject.ajaxurl, {method: 'POST', body: ajaxData});
-    // console.log(request);
-    fetch(request);
-});
+//submissionObject is localized
+document.querySelector('.input-group input')?.addEventListener("change", 
+    function confirmSubmission() {
+        let csv = this.files[0];
+        const ajaxData = new FormData();
+        ajaxData.append( 'action', 'submission_create');
+        ajaxData.append( 'nonce', submissionObject.nonce);
+        ajaxData.append('submission', csv, csv.name);
+        const request = new Request(submissionObject.ajaxurl, {method: 'POST', body: ajaxData});
+        if ( confirm("Would you like to submit your Uploaded CSV?") ) {
+            fetch(request)
+                .then(res => res.text() )
+                .then(data => { window.location.href = "/submission/"+data });
+        } else {
+            this.value = null;
+            document.getElementById("file-input").innerText="Select File";
+        }
+    }
+);
 
+//popuplate the map on the submission page
 window.addEventListener("load", () => {
+
+    if (!document.querySelector('body.single-submission')) {
+        return;
+    }
+
     let csvLines = post_meta.data[0].split("\r");
     let headers = csvLines[0].split(",");
     let result = [];
-
-    // console.log(JSON.stringify(post_meta.data));
 
     for ( let i = 1; i < csvLines.length; i++ ) {
         let obj = {};
@@ -201,8 +214,6 @@ window.addEventListener("load", () => {
     let output = JSON.parse( JSON.stringify(result) );
 
 
-    // console.log(output);
-
     const center = { lat: 40, lng: -101.2996 };
     const map = new google.maps.Map(
         document.getElementById("map"),
@@ -214,35 +225,44 @@ window.addEventListener("load", () => {
     );
 
 
-    // output.forEach(obj => {
-        Object.entries(output).forEach( ([key, val]) => {
-            let coords = {lat: Number(val.Latitude), lng: Number(val.Longitude)};
-            console.log(coords);
+    Object.entries(output).forEach( ([key, val]) => {
+        let coords = {lat: Number(val.Latitude), lng: Number(val.Longitude)};
 
-            const contentString =
-                '<div id="content" style="color: black;">' +
-                '<p style="margin: 0; margin-bottom: 5px;"><strong>' + val["Airport Name"] + '</strong></p>' +
-                '<p style="margin: 0;">'+ val.Latitude + ', ' + val.Longitude + '</p>' +
-                "</div>";
-        
-            const infowindow = new google.maps.InfoWindow({
-                content: contentString,
-                ariaLabel: val["Airport Name"],
-            });
-            
-
-            let marker = new google.maps.Marker({
-                position: coords,
-                map,
-                title: val["Airport Name"],
-            });
-
-            marker.addListener("click", () => {
-                infowindow.open({
-                    anchor: marker,
-                    map,
-                })
-            });
+        const contentString =
+            '<div id="content" style="color: black;">' +
+            '<p style="margin: 0; margin-bottom: 5px;"><strong>' + val["Airport Name"] + '</strong></p>' +
+            '<p style="margin: 0;">'+ val.Latitude + ', ' + val.Longitude + '</p>' +
+            "</div>";
+    
+        const infowindow = new google.maps.InfoWindow({
+            content: contentString,
+            ariaLabel: val["Airport Name"],
         });
-    // });
+        
+
+        let marker = new google.maps.Marker({
+            position: coords,
+            map,
+            title: val["Airport Name"],
+            icon: '/wp-content/themes/wonderful-interview/assets/img/marker.png'
+        });
+
+        marker.addListener("click", () => {
+            infowindow.open({
+                anchor: marker,
+                map,
+            })
+        });
+    });
 });
+
+//copy link from input
+document.querySelector('#share')?.addEventListener("click", 
+    function copyValue(e) {
+        this.select();
+        this.setSelectionRange(0, 99999);
+
+        navigator.clipboard.writeText(this.value);
+        alert("Link copied to clipboard.");
+    }
+);

@@ -195,7 +195,10 @@ declare global {
         initMap: () => void;
     }
 }
-window.initMap = initMap;
+//dont run init unless on the homepage
+if (document.querySelector('body.home')){
+    window.initMap = initMap;
+}
 
 
 //use button visually and store data with input
@@ -241,9 +244,3 @@ function dropHandler(file: DragEvent) {
     }
     updateFileUploadText();
 }
-
-//then we can have a confirm to start the ajax call to make the post
-// prompt yes -> admin ajax
-// prompt no -> clear dataTransfer and updateFileUploadText
-
-//fetch admin ajax with action
