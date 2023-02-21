@@ -181,7 +181,7 @@ document.querySelector('.input-group input')?.addEventListener("change",
         if ( confirm("Would you like to submit your Uploaded CSV?") ) {
             fetch(request)
                 .then(res => res.text() )
-                .then(data => { window.location.href = "/submission/"+data });
+                .then(data => { window.location.href += "/submission/"+data });
         } else {
             this.value = null;
             document.getElementById("file-input").innerText="Select File";
