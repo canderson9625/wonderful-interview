@@ -181,7 +181,7 @@ document.querySelector('.input-group input')?.addEventListener("change",
         if ( confirm("Would you like to submit your Uploaded CSV?") ) {
             fetch(request)
                 .then(res => res.text() )
-                .then(data => { window.location.href = "/submission/"+data });
+                .then(data => { window.location.href += "/submission/"+data });
         } else {
             this.value = null;
             document.getElementById("file-input").innerText="Select File";
@@ -213,7 +213,6 @@ window.addEventListener("load", () => {
 
     let output = JSON.parse( JSON.stringify(result) );
 
-
     const center = { lat: 40, lng: -101.2996 };
     const map = new google.maps.Map(
         document.getElementById("map"),
@@ -223,7 +222,6 @@ window.addEventListener("load", () => {
             styles: mapStyles,
         }
     );
-
 
     Object.entries(output).forEach( ([key, val]) => {
         let coords = {lat: Number(val.Latitude), lng: Number(val.Longitude)};
@@ -238,13 +236,12 @@ window.addEventListener("load", () => {
             content: contentString,
             ariaLabel: val["Airport Name"],
         });
-        
 
         let marker = new google.maps.Marker({
             position: coords,
             map,
             title: val["Airport Name"],
-            icon: '/wp-content/themes/wonderful-interview/assets/img/marker.png'
+            icon: submissionObject.theme_path + '/assets/img/marker.png'
         });
 
         marker.addListener("click", () => {

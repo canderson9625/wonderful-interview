@@ -28,6 +28,8 @@ wp_localize_script('ajax-script', 'post_meta', array(
 </main>
 
 <div id="map">
+    <!-- Google requires a cb but we need to localize before loading map  -->
+    <script>function initMap() {}</script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBv_GoHe7K6FV_u4CtOybV7ZHceMWVBy68&callback=initMap"></script>
 </div>
 
